@@ -1,0 +1,100 @@
+<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="navbar">
+	<a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+	<a href="sys.html"  class="btn btn--s">&lt;&nbsp;<strong>System Administration</strong></a>
+</div>
+
+<div class="content">
+		<h2>Configure Telegram Bot</h2>
+		If you insert your Telegram Token bot, you can control the CatFeeder 
+		from your Telegram App just  chatting. For more info in Telegram bots,
+		read this: <a href="https://core.telegram.org/bots">Bots for Developers</a>.
+		Just add the Bot Token auth and press save.<br/>
+
+		<b>TODO:</b> add some documentation
+
+</div>
+
+	
+<div class="management">  
+		<form action="" method="post" id="theform">
+				<table border="0"  cellspacing="0" cellpadding="3" >
+					<tr>
+						<td align="right">Bot Auth Token</td>
+						<td>
+						<input type="text" id="bottoken" name="bottoken" value=""></td>
+					</tr>
+					<tr>
+						<td align="left" colspan="2">
+						<hr></td>
+					</tr>
+					<tr>
+							
+						<td colspan="2" align="center">
+							<input type="button" style="width:150px" class="btn btn--m btn--orange" value="Clear"  onclick="ClearForm('theform');"">
+							<input type="button" style="width:150px" class="btn btn--m btn--orange" value="Save"  onclick="SubmitForm('theform');""></td>
+						</tr>
+					</table>
+				</form>
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+
+function ClearForm(id) {
+	d = document.getElementById('bottoken');
+	d.value = "";
+    var data = new FormData(document.getElementById(id));
+    ajax('/catfeeder/bot_config', 'POST', data, true, SetValues);
+}
+
+function SubmitForm(id) {
+    var data = new FormData(document.getElementById(id));
+    ajax('/catfeeder/bot_config', 'POST', data, true, SetValues);
+}
+
+
+
+function getConfig() {
+    ajax('/catfeeder/bot_config', 'GET', null, true, SetValues);
+}
+
+function SetValues(res) {
+    if (!res || (res == '[]')) {
+        setTimeout(function () { getConfig(); }, 5000);
+        return;
+    }
+
+    obj = JSON.parse(res);
+	d = document.getElementById('bottoken');
+    d.value = obj.bottoken;
+
+}
+
+window.onload = function () {
+    getConfig();
+}
+
+</script>
+</script>

@@ -1,0 +1,177 @@
+<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   
+    <link rel="stylesheet" href="pickr.css">
+    <link rel="stylesheet" href="s.css">  
+
+    <script src="pickr.js"></script>
+    <script src="majax.js"></script>
+    
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="navbar">
+    <a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+</div>
+
+<div class="content">
+    <h2>Schedule</h2>
+    <table class="sched--table">
+        <form action="" method="post" id="theform">
+        <tr><td><span class="orange trheader">Program</span></td><td><span class="orange trheader">Open At ...</span></td><td></td></tr>
+        <tr><td>#1</td><td><input type="text" placeholder="Select Date.." id="sched_1" name="sched_1" readonly="readonly" class="sched--input"></td><td><a href="#" onclick="javascript:ClearDate('sched_1')" class="btn btn--s">Clear</a></td></tr>
+        <tr><td>#2</td><td><input type="text" placeholder="Select Date.." id="sched_2" name="sched_2" readonly="readonly" class="sched--input"></td><td><a href="#" onclick="javascript:ClearDate('sched_2')" class="btn btn--s">Clear</a></td></tr>
+        <tr><td>#3</td><td><input type="text" placeholder="Select Date.." id="sched_3" name="sched_3" readonly="readonly" class="sched--input"></td><td><a href="#" onclick="javascript:ClearDate('sched_3')" class="btn btn--s">Clear</a></td></tr>
+        <tr><td>#4</td><td><input type="text" placeholder="Select Date.." id="sched_4" name="sched_4" readonly="readonly" class="sched--input"></td><td><a href="#" onclick="javascript:ClearDate('sched_4')" class="btn btn--s">Clear</a></td></tr>
+        <tr><td>#5</td><td><input type="text" placeholder="Select Date.." id="sched_5" name="sched_5" readonly="readonly" class="sched--input"></td><td><a href="#" onclick="javascript:ClearDate('sched_5')" class="btn btn--s">Clear</a></td></tr>
+        <tr><td>#6</td><td><input type="text" placeholder="Select Date.." id="sched_6" name="sched_6" readonly="readonly" class="sched--input"></td><td><a href="#" onclick="javascript:ClearDate('sched_6')" class="btn btn--s">Clear</a></td></tr>
+        <tr><td>#7</td><td><input type="text" placeholder="Select Date.." id="sched_7" name="sched_7" readonly="readonly" class="sched--input"></td><td><a href="#" onclick="javascript:ClearDate('sched_7')" class="btn btn--s">Clear</a></td></tr>
+        <tr>
+            <td></td>
+            <td colspan="2" align="right">
+                    <input type="button" style="width:150px" class="btn btn--m btn--orange" value="Reset All" onclick="ResetAll();"">
+                <input type="button" style="width:150px" class="btn btn--m btn--orange" value="Save" onclick="SubmitForm('theform');"">
+                </td>
+        </tr>
+    </table>
+
+
+</div>
+
+<div class="management">
+<br/>
+
+
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+<script>
+
+/*
+ // not used functions to parse date, time and so on.
+
+function SubmitForm(fid) {
+    for (i =1; i<8; i++) {
+        sid = 'sched_' + i;
+        d = document.getElementById(sid);
+        if (d.value) {
+            d.value = new Date(d.value).getTime();
+        }
+    }
+    f = document.getElementById(fid);
+    f.submit();
+}
+
+
+function ClearDate(fieldid) {
+    var d = document.getElementById(fieldid);
+    if (d) {
+        d.value = "";
+    }
+}
+
+
+function to_ts(fieldid) {
+    var d = document.getElementById(fieldid);
+    if (d) {
+        return((new Date(d.value)).getTime());
+    }
+}
+
+function pad0(w) { return ("0" + w).slice(-2); }
+
+function from_ts(ts) {
+    dd= new Date(ts);
+    var d = dd.getDate();
+    var m = dd.getMonth() + 1; //Month from 0 to 11
+    var y = dd.getFullYear();
+    var H = dd.getHours();
+    var M = dd.getMinutes();
+    //var S = dd.getSeconds();
+
+    var dates = "" + y + "/" + pad0(m) + "/" + pad0(d) + " " +  pad0(H) + ":" + pad0(M);
+    return(dates);
+}
+
+function set_ts(ts, fieldid) {
+    var d = document.getElementById(fieldid);
+    if (d) {
+        d.value = from_ts(ts);
+    } 
+}
+*/
+
+function ResetAll(id) {
+    for (i =1; i<8; i++) {
+        sid = 'sched_' + i;
+        d = document.getElementById(sid);
+        d.value = "";
+    }
+    ajax('/catfeeder/scheduler_reset', 'GET', null, true, SetValues);
+}
+
+function SubmitForm(id) {
+    var data = new FormData(document.getElementById(id));
+    ajax('/catfeeder/scheduler_config', 'POST', data, true, SetValues);
+}
+
+
+function ClearDate(fieldid) {
+    var d = document.getElementById(fieldid);
+    if (d) {
+        d.value = "";
+    }
+}
+
+function getSchedule() {
+    ajax('/catfeeder/scheduler_config', 'GET', null, true, SetValues);
+}
+
+function SetValues(res) {
+    if (!res || (res == '[]')) {
+        setTimeout(function () { getSchedule(); }, 5000);
+        return;
+    }
+
+    obj = JSON.parse(res);
+    for (var i = 0; i < obj.scheduler.length; i++) {
+
+        sid = 'sched_' + (i+1);
+        d = document.getElementById(sid);
+        if (d) {
+            d.value = obj.scheduler[i];
+        }
+    }
+}
+
+    window.onload = function () {
+        flatpickr(".sched--input", {
+           enableTime: true,
+            dateFormat: "d/m/Y H:i:S",
+            minDate: "today",
+            time_24hr: true,
+            //defaultDate: new Date(),
+            enableSeconds: true
+        });
+
+    getSchedule();
+
+    }
+
+</script>

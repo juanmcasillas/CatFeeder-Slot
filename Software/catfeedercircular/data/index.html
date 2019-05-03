@@ -1,0 +1,76 @@
+<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/
+><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="content">
+    <h1>Status</h1>
+    <p>Current CatFeeder position</p>
+    <div class="feeder-container">
+        <img src="" class="feeder" id="img--feeder"/>
+    </div>
+    <br/><br/>
+    <div>Last Open: <span id="lastopen"></span></div>
+    
+</div>
+<div class="management">
+<a href="schedule.html" style="width:250px" class="btn btn--m btn--orange" >Schedule</a><br/>
+<a href="stats.html" style="width:250px" class="btn btn--m btn--orange" >Stats</a><br/>
+
+<br/>
+<a href="sys.html"   style="width:250px"  class="btn btn--m btn--orange" >System Administration</a><br>
+<a href="net.html"   style="width:250px"  class="btn btn--m btn--orange" >Network Administration</a><br>
+<br/>
+
+<br/>
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+<script>
+function parseFeedStatus(res) {
+        var timeout = 10; // ten seconds
+
+        if (!res || (res == '[]')) {
+            setTimeout(function () { getFeedStatus(); }, timeout*1000);
+            return;
+        }
+
+        obj = JSON.parse(res);
+        // set the dates
+        //for (i of [ "lastopen", "nextopen"] ) {
+            document.getElementById('lastopen').innerHTML = obj['lastopen'];
+        //}
+        // set the image based position: fX.png
+        v = sprintf("f%d.png", obj.position);
+        document.getElementById("img--feeder").src = v;
+
+        setTimeout(function () { getFeedStatus(); }, timeout*1000);
+    }
+
+
+function getFeedStatus() {
+    ajax('/catfeeder/status', 'GET', null, true, parseFeedStatus);
+}
+
+window.onload = function () {
+    getFeedStatus();
+}
+</script>

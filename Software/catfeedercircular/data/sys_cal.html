@@ -1,0 +1,122 @@
+<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/
+><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+<div class="navbar">
+        <a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+        <a href="sys.html"  class="btn btn--s">&lt;&nbsp;<strong>System Administration</strong></a>
+    </div>
+
+<div class="content">
+    <h1>Calibration</h1>
+    <p>Press Start to start calibration, then align the cuts using the buttons. This will be the position marked as #1</p>
+
+    <div class="feeder-container">
+        <img src="cal.png" class="feeder" id="img--feeder"/><br/><br/>
+    
+        Calibration Offset: <span id="calibration-offset">0</span><br/><br/>
+        <div class="feeder-button-container">
+                <a href="javascript:Calibrate('l',50);"  class="btn btn--s" id="cal-but-ll"><strong>&lt;&lt;&lt;</strong></a>
+                <a href="javascript:Calibrate('l',10);"  class="btn btn--s" id="cal-but-l"><strong>&lt;&lt;</strong></a>
+                <a href="javascript:Calibrate('l',1);"  class="btn btn--s" id="cal-but-l"><strong>&lt;</strong></a>
+                <a href="javascript:StartCalibrate();" class="btn btn--m btn--grey">Start</a>
+                <a href="javascript:Calibrate('r',1);"  class="btn btn--s" id="cal-but-r"><strong>&gt;</strong></a>
+                <a href="javascript:Calibrate('r',10);"  class="btn btn--s" id="cal-but-r"><strong>&gt;&gt;</strong></a>
+                <a href="javascript:Calibrate('r',50);"  class="btn btn--s" id="cal-but-rr"><strong>&gt;&gt;&gt;</strong></a>
+        </div>
+    </div>
+    <br/>
+</div>
+<div class="management">
+    <h1>Test</h1>
+    <p>Press the numbers to move to the selected slot. When you're done, press Restore</p>
+    <div class="feeder-container">
+        <img src="" class="feeder" id="img--feeder-test"/><br/><br/>
+        <div class="feeder-button-container">
+                <a href="javascript:MoveTo(1);"  class="btn btn--s"><strong>1</strong></a>
+                <a href="javascript:MoveTo(2);"  class="btn btn--s"><strong>2</strong></a>
+                <a href="javascript:MoveTo(3);"  class="btn btn--s"><strong>3</strong></a>
+                <a href="javascript:MoveTo(4);"  class="btn btn--s"><strong>4</strong></a>
+                <a href="javascript:MoveTo(5);"  class="btn btn--s"><strong>5</strong></a>
+                <a href="javascript:MoveTo(6);"  class="btn btn--s"><strong>6</strong></a>
+                <a href="javascript:MoveTo(7);"  class="btn btn--s"><strong>7</strong></a>
+                <a href="javascript:MoveTo(8);"  class="btn btn--s"><strong>8</strong></a>
+                <br/>
+                <a href="javascript:Restore();" class="btn btn--m btn--grey">Restore</a>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+
+
+<script>
+
+
+
+function parseCalibrateStatus(res) {
+    var timeout = 10; // ten seconds
+    
+    if (!res || (res == '[]')) {
+        return;
+    }
+
+    obj = JSON.parse(res);    
+    document.getElementById("calibration-offset").innerHTML = obj.offset;
+}
+function Calibrate(direction, steps) {
+    url = sprintf("/catfeeder/calibrate?d=%s&s=%d", direction, steps);
+    ajax(url, 'GET', null, true, parseCalibrateStatus);
+}
+
+function StartCalibrate() {
+    ajax('/catfeeder/calibrate_start', 'GET', null, true, parseCalibrateStatus);
+}
+
+function Restore() {
+    ajax('/catfeeder/calibrate_restore', 'GET', null, true, parseCalibrateStatus);
+}
+
+function MoveTo(slot) {
+    url = sprintf("/catfeeder/test_moveto?s=%d", slot);
+    ajax(url, 'GET', null, true, parseFeedStatus);
+}
+
+function parseFeedStatus(res) {
+        if (!res || (res == '[]')) {
+            return;
+        }
+        obj = JSON.parse(res);
+        // set the dates
+        // set the image based position: fX.png
+        v = sprintf("f%d.png", obj.position);
+        document.getElementById("img--feeder-test").src = v;
+    }
+
+function getFeedStatus() {
+    ajax('/catfeeder/test_position', 'GET', null, true, parseFeedStatus);
+}
+
+window.onload = function () {
+    getFeedStatus();
+
+}
+</script>

@@ -1,0 +1,6 @@
+[submodule "Libs/FSBrowserNG"]
+	path = Libs/FSBrowserNG
+	url = https://github.com/juanmcasillas/FSBrowserNG.git
+[submodule "Libs/Universal-Arduino-Telegram-Bot"]
+	path = Libs/Universal-Arduino-Telegram-Bot
+	url = https://github.com/juanmcasillas/Universal-Arduino-Telegram-Bot.git

@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="navbar">
+    <a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+</div>
+
+<div class="content">
+    <h2>Stats</h2>
+    Some stats for the system. For now, you can only check the syslog.
+</div>
+
+<div class="management">
+<br/>
+<div class="stats--ta" id="stats--div"><pre id="stats--ta"></pre></div>
+
+<br/>
+<a href="javascript:ClearLog();" class="btn btn--m btn--grey">Truncate Log</a>
+<a href="javascript:getLog();" class="btn btn--m btn--grey">Refresh Log</a>
+<a href="/catfeeder/get_log" class="btn btn--m btn--grey">Download</a>
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+<script>
+
+function ClearLog() {
+    ajax('/catfeeder/reset_log', 'GET', null, true, SetValues);
+}
+
+
+function getLog() {
+   // ajax('/catfeeder/get_log', 'GET', null, true, SetValues);
+   ajax('/catfeeder.log', 'GET', null, true, SetValues);
+}
+
+function SetValues(res) {
+    d = document.getElementById('stats--ta');
+    if (d) {
+        d.innerHTML = "";
+        d.innerHTML = res;
+    }
+    d = document.getElementById('stats--div');
+    if (d) {
+        d.scrollTop = d.scrollHeight;
+    }
+}
+
+window.onload = function () {
+    getLog();
+}
+</script>

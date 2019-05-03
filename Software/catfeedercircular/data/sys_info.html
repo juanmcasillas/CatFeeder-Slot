@@ -1,0 +1,130 @@
+﻿<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="navbar">
+		<a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+		<a href="sys.html"  class="btn btn--s">&lt;&nbsp;<strong>System Administration</strong></a>
+</div>
+
+<div class="content">
+		<h2>System Information</h2>
+		Info data about MAC address, WIFI, etc.
+</div>
+
+<div class="management">  
+		<table border="0"  cellspacing="0" cellpadding="3" style="width:310px" >
+				<tr>
+					<td align="right">SSID :</td>
+					<td>
+						<span id="x_ssid"></span>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">IP :</td>
+					<td>
+						<span id="x_ip"></span>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Netmask :</td>
+					<td>
+						<span id="x_netmask"></span>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Gateway :</td>
+					<td>
+						<span id="x_gateway"></span>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">DNS :</td>
+					<td>
+						<span id="x_dns"></span>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Mac :</td>
+					<td>
+						<span id="x_mac"></span>
+					</td>
+				</tr>
+		
+				<tr>
+						<td align="right">DHCP :</td>
+						<td>
+							<span id="x_dhcp"></span>
+						</td>
+					</tr>
+
+				<tr>
+					<td colspan="2">
+					<span><hr></span>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">NTP Date:</td>
+				<td>
+					<span id="x_ntp_date"></span>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">NTP Time:</td>
+				<td>
+					<span id="x_ntp_time"></span>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">Last sync:</td>
+				<td>
+					<span id="x_ntp_sync"></span>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">Uptime:</td>
+				<td>
+					 <span id="x_uptime"></span>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">Last boot:</td>
+				<td>
+					 <span id="x_last_boot"></span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<br/>
+					<a href="javascript:GetState();" class="btn btn--m btn--grey">Refresh</a>
+				</td>
+			</tr>
+		</table>
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+	function GetState() {
+		setValues("/admin/infovalues");
+	}
+
+	GetState();
+</script>

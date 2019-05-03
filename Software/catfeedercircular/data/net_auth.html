@@ -1,0 +1,112 @@
+﻿<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="navbar">
+        <a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+        <a href="net.html"  class="btn btn--s">&lt;&nbsp;<strong>Network Administration</strong></a>
+</div>
+
+<div class="content">
+		<h2>Configure Authentication</h2>
+         <i>(Notice: password is used for HTTP Auth, AP Mode and OTA)</i>
+</div>
+
+<div class="management">  
+        <form id="wwwAuthForm" action="" method="get">
+                <table border="0" cellspacing="0" cellpadding="3" style="width:350px">
+                    <tr>
+                        <td style="width:120px" align="right">Use auth:</td>
+                        <td>
+                            <input type="checkbox" id="wwwauth" name="wwwauth" onclick='enableAuthFields(this);'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">Web User:</td>
+                        <td>
+                            <input type="text" id="wwwuser" name="wwwuser" value="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">Password:</td>
+                        <td>
+                            <input type="password" id="wwwpass" name="wwwpass" value="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <br/>
+                            <a href='javascript:submitFrm(document.forms["wwwAuthForm"])' style="width:150px" class="btn btn--m btn--grey">Save</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <table border="0" cellspacing="0" cellpadding="3" style="width:350px">
+              <tr>
+                  <td id="submitResult"></td>
+              </tr>
+            </table>
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+
+ 
+  
+  
+  <script>
+        function enableAuthFields(cb) {
+            document.getElementById("wwwuser").disabled = !cb.checked;
+            document.getElementById("wwwpass").disabled = !cb.checked;
+        }
+
+        function submitFrm(frm) {
+            if (document.getElementById("wwwauth").checked) {
+                if ((document.getElementById("wwwuser").value != "") && (document.getElementById("wwwpass").value != "")) {
+                    //document.getElementById("submitResult").innerHTML = "Auth updated";
+                    console.log("User: " + document.getElementById("wwwuser").value);
+                    console.log("Pass: " + document.getElementById("wwwpass").value);
+                    console.log("Enable: " + document.getElementById("wwwauth").checked);
+                    frm.submit();
+                } else {
+                    document.getElementById("submitResult").innerHTML = "User and password must be filled";
+                }
+            } else {
+                //document.getElementById("wwwuser").value = "";
+                document.getElementById("wwwpass").value = "";
+                //document.getElementById("submitResult").innerHTML = "Auth disabled";
+                console.log("User: " + document.getElementById("wwwuser").value);
+                console.log("Pass: " + document.getElementById("wwwpass").value);
+                console.log("Enable: " + document.getElementById("wwwauth").checked);
+                frm.submit();
+                
+            }
+        }
+
+        function GetState() {
+            setValues("/admin/wwwauth");
+        }
+
+        window.onload = function () {
+            GetState();
+            enableAuthFields(document.getElementById("wwwauth"));
+        }
+
+    </script>

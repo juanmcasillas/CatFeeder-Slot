@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="navbar">
+		<a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+		<a href="sys.html"  class="btn btn--s">&lt;&nbsp;<strong>System Administration</strong></a>
+</div>
+
+<div class="content">
+		<h2>Restart/Shutdown</h2>
+        Handle with care ... or you have to power it manually again!
+        Please notice that <b>Restart as AP</b> option cleans your configuration!
+</div>
+
+<div class="management">  
+        <a href="javascript:restartESP()" class="btn btn--m btn--grey">Restart</a>
+        <a href="javascript:cleanAP()" class="btn btn--m btn--grey">Restart as AP</a>
+        <!--
+            #define CH_PD_PIN 4
+            pinMode(CH_PD_PIN, OUTPUT);
+            digitalWrite(CH_PD_PIN, 1); // bring up ESP8266 from power-down mode. It resets.
+            digitalWrite(CH_PD_PIN, 0);  // activate PD power-down pin of ESP8266
+        -->
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+	function restartESP() {
+		setValues("/admin/restart");
+	}
+    function cleanAP() {
+		setValues("admin/cleanap");
+	}
+</script>
+
+
+

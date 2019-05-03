@@ -1,0 +1,188 @@
+﻿<html>
+<head>
+    <title>CatFeeder Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="s.css">  
+    <script src="majax.js"></script>
+</head>
+
+<body>
+<div class="head">
+<a href="#"><img src="logo.png"/></a>
+<h1>CatFeeder</h1><br/><b>Manage your cat's feeder!</b>
+<hr/>
+</div>
+
+<div class="navbar">
+    <a href="index.html"  class="btn btn--s">&lt;&nbsp;<strong>Main Page</strong></a>
+    <a href="net.html"  class="btn btn--s">&lt;&nbsp;<strong>Network Administration</strong></a>
+</div>
+
+<div class="management">  
+        <h2>NTP Settings</h2>
+        
+        <form action="" method="get">
+                <table border="0"  cellspacing="0" cellpadding="3" >
+                    <tr>
+                        <td align="right">NTP Server:</td>
+                        <td>
+                        <input type="text" id="ntpserver" name="ntpserver" maxlength="172" value=""></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Update:</td>
+                        <td>
+                        <input type="text" id="update" name="update" size="3" maxlength="6" value=""> minutes (0=disable)</td>
+                    </tr>
+                    <tr>
+                        <td>Timezone</td>
+                        <td>
+                            <select  id="tz" name="tz">
+                                <option value="-120">(GMT-12:00)</option>
+                                <option value="-110">(GMT-11:00)</option>
+                                <option value="-100">(GMT-10:00)</option>
+                                <option value="-90">(GMT-09:00)</option>
+                                <option value="-80">(GMT-08:00)</option>
+                                <option value="-70">(GMT-07:00)</option>
+                                <option value="-60">(GMT-06:00)</option>
+                                <option value="-50">(GMT-05:00)</option>
+                                <option value="-40">(GMT-04:00)</option>
+                                <option value="-35">(GMT-03:30)</option>
+                                <option value="-30">(GMT-03:00)</option>
+                                <option value="-20">(GMT-02:00)</option>
+                                <option value="-10">(GMT-01:00)</option>
+                                <option value="0">(GMT+00:00)</option>
+                                <option value="10">(GMT+01:00)</option>
+                                <option value="20">(GMT+02:00)</option>
+                                <option value="30">(GMT+03:00)</option>
+                                <option value="35">(GMT+03:30)</option>
+                                <option value="40">(GMT+04:00)</option>
+                                <option value="45">(GMT+04:30)</option>
+                                <option value="50">(GMT+05:00)</option>
+                                <option value="55">(GMT+05:30)</option>
+                                <option value="57">(GMT+05:45)</option>
+                                <option value="60">(GMT+06:00)</option>
+                                <option value="65">(GMT+06:30)</option>
+                                <option value="70">(GMT+07:00)</option>
+                                <option value="80">(GMT+08:00)</option>
+                                <option value="90">(GMT+09:00)</option>
+                                <option value="95">(GMT+09:30)</option>
+                                <option value="100">(GMT+10:00)</option>
+                                <option value="110">(GMT+11:00)</option>
+                                <option value="120">(GMT+12:00)</option>
+                                <option value="120">(GMT+12:00)</option>
+                                <option value="130">(GMT+13:00)</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">Daylight saving:</td>
+                        <td>
+                        <input type="checkbox" id="dst" name="dst"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                        <br/>
+                        <input type="submit" style="width:150px" class="btn btn--m btn--grey" value="Save"></td>
+                    </tr>
+                </table>
+            </form>
+
+
+
+</div>
+
+<div class="footer">
+    <hr/>
+    &copy; 2019 <a href="https://github.com/juanmcasillas/">Juan M. Casillas</a>
+</div>
+</body>
+</html>
+
+
+
+<script language="javascript" type="text/javascript">
+
+    function securityStr(security) {
+        if      (security == 7) {
+            return 'Open';
+        }
+        else if (security == 5) {
+            return 'WEP';
+        }
+        else if (security == 2) {
+            return 'WPA';
+        }
+        else if (security == 4) {
+            return 'WPA2';
+        }
+        else if (security == 8) {
+            return 'WPA/WPA2';
+        }
+    }
+
+    function wifiScan(res) {
+        var array;
+
+        if (!res || (res == '[]')) {
+            setTimeout(function () { getNetwork(); }, 5000);
+            return;
+        }
+        array = JSON.parse(res);
+        array.sort(function (a, b) { return a.rssi - b.rssi });
+        array.reverse();
+        d = document.getElementById("numNets");
+        if (d) {
+            d.innerHTML = array.length;
+        }
+        var table = document.getElementById("networks");
+        if (table) {
+            table.innerHTML = "";
+        
+        for (var i = 0; i < array.length; i++) {
+            var row = document.createElement("tr");
+            row.innerHTML = "<td><a href='javascript:selssid(\"" + array[i].ssid + "\")'>" + array[i].ssid + "</td><td>" + array[i].channel + "</td><td>" + securityStr(array[i].secure) + "</td><td>" + array[i].rssi + "</td>";
+            table.appendChild(row);
+        }
+        }
+
+    }
+    function selssid(value) {
+        document.getElementById("ssid").value = value;
+    }
+
+    function getNetwork() {
+        /*
+        request = new XMLHttpRequest();
+        if (request) {
+            request.open("GET", "/scan", true);
+            request.addEventListener("load", wifiScan)
+            request.send();
+        }
+        */
+        ajax('/scan', 'GET', null, true, wifiScan);
+    }
+
+    function GetState() {
+        setValues("/admin/connectionstate");
+    }
+
+
+    window.onload = function () {
+        setValues("/admin/values");
+        setValues("/admin/connectionstate");
+        ajax('/scan', 'GET', null, true, wifiScan);
+        setValues("/admin/ntpvalues");
+        
+        setTimeout(GetState, 3000);
+        setTimeout(getNetwork, 1000);
+    
+
+    }
+    
+
+
+</script>
+
+
+
