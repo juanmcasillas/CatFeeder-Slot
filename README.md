@@ -1,4 +1,4 @@
-# CatFeeder 
+# CatFeeder-Slot
 
 This project builds an automatic feeder for cats (or other small animals). The goal is build a complete, DIY solution,
 from the fabrication of the container, to software are electronics. The feeder is managed using a web interface, so you
