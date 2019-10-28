@@ -40,12 +40,12 @@ class MotorStepperClass {
         //const int stepsLookup[4] = { B1000, B0100, B0010, B0001 };
         
         //secuencia 2-fases
-        //const int numSteps = 4;
-        //const int stepsLookup[4] = { B1100, B0110, B0011, B1001 };
+        const int numSteps = 4;
+        const int stepsLookup[4] = { B1100, B0110, B0011, B1001 };
         
         //secuencia media fase
-        const int numSteps = 8;
-        const int stepsLookup[8] = { B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001 };
+        //const int numSteps = 8;
+        //const int stepsLookup[8] = { B1000, B1100, B0100, B0110, B0010, B0011, B0001, B1001 };
     
     public:
         void begin();

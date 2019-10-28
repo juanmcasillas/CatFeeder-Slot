@@ -49,6 +49,11 @@ void CatFeederClass::IsRunning() {
         _logger.INFO(" CONFIG::schedule[%d]: %s", i, this->scheduler[i].c_str());
     }
 
+    DEBUGLOG("\r\n");
+    DEBUGLOG("Flash chip size: %u\r\n", ESP.getFlashChipRealSize());
+    DEBUGLOG("Scketch size: %u\r\n", ESP.getSketchSize());
+    DEBUGLOG("Free flash space: %u\r\n", ESP.getFreeSketchSpace());
+    DEBUGLOG("Heap Available: %u\r\n", ESP.getFreeHeap());
 }
 
 // exercise the logger with some data
@@ -74,12 +79,12 @@ String CatFeederClass::Calibrate_Start(AsyncWebServerRequest *request) {
     this->position = 1; // first slot
 
     
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    StaticJsonDocument<500> root;
+    //JsonObject& root = jsonBuffer.createObject();
     root["offset"] = this->offset;
     
     String ret;
-    root.printTo(ret);
+    serializeJson(root, ret);
     return(ret);
 }
 
@@ -99,14 +104,14 @@ String CatFeederClass::Calibrate_Restore(AsyncWebServerRequest *request) {
 
 // get the status of the CatFeeder (index.html)
 String CatFeederClass::Status(AsyncWebServerRequest *request) {
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    StaticJsonDocument<500> root;
+    //JsonObject& root = jsonBuffer.createObject();
     root["position"] = this->position;
     root["lastopen"] = this->lastopen;
     root["nextopen"] = this->nextopen;
    
     String ret;
-    root.printTo(ret);
+    serializeJson(root,ret);
     return(ret);
 }
 
@@ -150,12 +155,12 @@ String CatFeederClass::Calibrate(AsyncWebServerRequest *request) {
 		});
     */
 
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    StaticJsonDocument<500> root;
+    //JsonObject& root = jsonBuffer.createObject();
     root["offset"] = this->offset;
     
     String ret;
-    root.printTo(ret);
+    serializeJson(root,ret);
     return(ret);
 }
 
@@ -181,24 +186,24 @@ String CatFeederClass::Test_MoveTo(AsyncWebServerRequest *request) {
         this->test_position = b;
     }
 
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    StaticJsonDocument<500> root;
+    //JsonObject& root = jsonBuffer.createObject();
     root["position"] = this->test_position;
 
     String ret;
-    root.printTo(ret);
+    serializeJson(root,ret);
     return(ret);
 }
 
 // get the test position of the CatFeeder (sys_cal.html)
 String CatFeederClass::Test_Position(AsyncWebServerRequest *request) {
 
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    StaticJsonDocument<500> root;
+    //JsonObject& root = jsonBuffer.createObject();
     root["position"] = this->test_position;
 
     String ret;
-    root.printTo(ret);
+    serializeJson(root,ret);
     return(ret);
 }
 
@@ -239,16 +244,17 @@ String CatFeederClass::Scheduler_Config(AsyncWebServerRequest *request) {
     // always return the data
     // retrieve data as json
 
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
-    JsonArray& jsonscheduler = root.createNestedArray("scheduler");
+    StaticJsonDocument<500> root;
+    //JsonObject& root = jsonBuffer.createObject();
+    JsonObject doc = root.to<JsonObject>();
+    JsonArray jsonscheduler = doc.createNestedArray("scheduler");
 	
     for (int i=0; i< this->PROGRAMS; i++) {
         jsonscheduler.add(this->scheduler[i]);
     }
 
     String ret;
-    root.printTo(ret);
+    serializeJson(root,ret);
     return(ret);
 }
 
@@ -271,16 +277,16 @@ String CatFeederClass::Scheduler_Reset(AsyncWebServerRequest *request) {
     // always return the data
     // retrieve data as json
 
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
-    JsonArray& jsonscheduler = root.createNestedArray("scheduler");
+    StaticJsonDocument<500> root;
+    JsonObject doc = root.to<JsonObject>();
+    JsonArray jsonscheduler = doc.createNestedArray("scheduler");
 	
     for (int i=0; i< this->PROGRAMS; i++) {
         jsonscheduler.add(this->scheduler[i]);
     }
 
     String ret;
-    root.printTo(ret);
+    serializeJson(root,ret);
     return(ret);
 }
 
@@ -310,15 +316,16 @@ String CatFeederClass::Reset_Log(AsyncWebServerRequest *request) {
 
 bool CatFeederClass::SaveConfig() {
 
-	DynamicJsonBuffer jsonBuffer(512);
-	//StaticJsonBuffer<1024> jsonBuffer;
-	JsonObject& json = jsonBuffer.createObject();
+	StaticJsonDocument<512> json;
+    JsonObject doc = json.to<JsonObject>();
+   //StaticJsonDocument<1024> jsonBuffer;
+	//JsonObject& json = jsonBuffer.createObject();
     json["position"] = this->position;
     json["lastopen"] = this->lastopen;
     json["nextopen"] = this->nextopen; // deprecated.
-    json["bottoken"] = this->_bot.token;
+    //json["bottoken"] = this->_bot.token;
 
-	JsonArray& jsonscheduler = json.createNestedArray("scheduler");
+	JsonArray jsonscheduler = doc.createNestedArray("scheduler");
     for (int i=0; i < this->PROGRAMS; i++) {
 	    jsonscheduler.add(this->scheduler[i]);
     }
@@ -332,11 +339,12 @@ bool CatFeederClass::SaveConfig() {
 
 #ifndef RELEASE
 	String temp;
-	json.prettyPrintTo(temp);
+    serializeJsonPretty(json, temp);
+	//json.prettyPrintTo(temp);
     DEBUGLOG(temp.c_str());
 #endif
 
-	json.printTo(configFile);
+	serializeJson(json,configFile);
 	configFile.flush();
 	configFile.close();
 	return true;
@@ -356,16 +364,17 @@ bool CatFeederClass::LoadConfig() {
 	configFile.readBytes(buf.get(), size);
 	configFile.close();
 	DEBUGLOG("JSON file size: %d bytes\r\n", size);
-	DynamicJsonBuffer jsonBuffer(1024);
-	JsonObject& json = jsonBuffer.parseObject(buf.get());
+	StaticJsonDocument<1024> json;
+	//JsonObject& json = jsonBuffer.parseObject(buf.get());
 
-	if (!json.success()) {
+    auto error = deserializeJson(json, buf.get());
+	if (error) {
 		DEBUGLOG("CatFeeder: Failed to parse config file %s\r\n", CATFEEDER_CONFIG_FILE.c_str());
 		return false;
 	}
 #ifndef RELEASE
 	String temp;
-	json.prettyPrintTo(temp);
+	serializeJsonPretty(json, temp);
 	DEBUGLOG(temp.c_str());
 #endif
     
@@ -381,9 +390,9 @@ bool CatFeederClass::LoadConfig() {
         this->nextopen = json["nextopen"].as<const char *>();
     }
 
-    if (json.containsKey("bottoken")) {
-        this->_bot.token = json["bottoken"].as<const char *>();
-    }
+    //if (json.containsKey("bottoken")) {
+    //    this->_bot.token = json["bottoken"].as<const char *>();
+    //}
 
     if (json.containsKey("scheduler")) {
         for (int i=0; i < this->PROGRAMS; i++) {
@@ -395,7 +404,7 @@ bool CatFeederClass::LoadConfig() {
 	DEBUGLOG("position:  %d\n", this->position);
     DEBUGLOG("lastopen:  %s\n", this->lastopen.c_str());
     DEBUGLOG("nextopen:  %s\n", this->nextopen.c_str());
-    DEBUGLOG("bot token: %s\n", this->_bot.token.c_str());
+    //DEBUGLOG("bot token: %s\n", this->_bot.token.c_str());
 
     for (int i=0; i < this->PROGRAMS; i++) {
         DEBUGLOG("scheduler[%d]: %s\n", i, this->scheduler[i].c_str());
@@ -476,7 +485,7 @@ String CatFeederClass::Bot_Config(AsyncWebServerRequest *request) {
         AsyncWebParameter* p = request->getParam("bottoken",true);
         DEBUGLOG("Bot Token %s = %s\r\n", p->name().c_str(), p->value().c_str());
         
-        this->_bot.Init(p->value());
+        //this->_bot.Init(p->value());
 		this->SaveConfig();
 
 		this->_logger.INFO("Configuration saved");
@@ -485,19 +494,20 @@ String CatFeederClass::Bot_Config(AsyncWebServerRequest *request) {
     // always return the data
     // retrieve data as json
 
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
-    root["bottoken"] = this->_bot.token;
+    StaticJsonDocument<500> root;
+    //JsonObject& root = jsonBuffer.createObject();
+    //root["bottoken"] = this->_bot.token;
+    root["bottoken"] = "XXXX";
 
     String ret;
-    root.printTo(ret);
+    serializeJson(root,ret);
     return(ret);
 }
 
 
 // run the bot loop
 bool CatFeederClass::RunBot() {
-
+/*
     if (this->_bot.needsRun()) {
         int numNewMessages = this->_bot.getUpdates();
         while(numNewMessages) {
@@ -516,6 +526,7 @@ bool CatFeederClass::RunBot() {
 
         this->_bot.updateRun();
     }
+*/
 }
 
 
@@ -552,7 +563,7 @@ void CatFeederClass::_motor_moveto(int a, int b) {
 
     // calculate steps to do the required angle
     angle = this->ANGLE * distance;
-    steps = abs(_motor->stepsPerRev*angle/360);
+    steps = abs(_motor->stepsPerRev*angle/(360*2));
 
     // move the motor n steps remember that we have configured the motor
     // by default as half step, so we have to command two moves.

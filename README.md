@@ -44,7 +44,7 @@ This project provides:
 5. [Using Catfeeder](#using-catfeeder) 
     1. [Calibration](#calibration)
     2. [Configure Schedules](#configure-schedules)
-
+6. [Additional Notes](#additional-notes)
 
 # Project Features
 
@@ -625,3 +625,10 @@ CatFeeder starts to work, and move to the next slot if it have a program. Easy. 
 ![Schedule](images/config/schedule.png "Schedule")
 
 Hope you enjoy CatFeeder!
+
+## Additional Notes
+
+1. 28/October/2019 notes.
+    1. I migrated from `ArduinoJson` 5 to 6, changing also the `FSBrowserNG` library.
+    2. ESP8266 has a hard limit of 5 open files, so I merge all the CSS and the JS together, getting `all.min.css` and  `all.min.js`. This fixes the problem with error `500` in some cases, when retrieving too much files (e.g. scheduler)
+    3. Fixed motor from 8 steps to 4 steps, changing the `_motor_move_to()` so it get the right slot.

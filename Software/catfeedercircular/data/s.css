@@ -34,7 +34,7 @@ hr {
     }
 
     .btn:active {
-        color: rgb(241, 122, 42); // #0074D9;
+        color: rgb(241, 122, 42);
         border: 1px solid #0074D9;
         -webkit-transition: background-color 0.3s, color 0.3s, border 0.3s;
         transition: background-color 0.3s, color 0.3s, border 0.3s;
