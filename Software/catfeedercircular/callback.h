@@ -7,7 +7,7 @@
 
 void callbackFeeder(AsyncWebServerRequest *request) {
 
-    DEBUGLOG("CatFeederHandler: [%s]\n", request->url().c_str());
+    // DEBUGLOG("CatFeederHandler: [%s]\n", request->url().c_str());
 
     //
     // remove this. Just for tests the LOGGER.
