@@ -6,6 +6,7 @@
 #define __MOTORSTEPPERCLASS_H__
 
 #include <Arduino.h>
+#include <Servo.h>
 
 #ifndef DBG_OUTPUT_PORT
 #define DBG_OUTPUT_PORT Serial
@@ -17,10 +18,13 @@
 #define DEBUGLOG(...)
 #endif
 
+
+
 class MotorStepperClass {
     public:
         int stepsPerRev = 4096;  // pasos para una vuelta completa
         //int stepsPerRev = 4076;  // pasos para una vuelta completa
+        const int numSteps = 4;
     protected:
         // motor: 28BYJ48
         // driver ULN2003
@@ -33,14 +37,14 @@ class MotorStepperClass {
         int motorSpeed =  5;      // variable para fijar la velocidad milis
         int stepCounter = 0;     // contador para los pasos
         
-
+        
         //tablas con la secuencia de encendido (descomentar la que necesiteis)
         //secuencia 1-fase
         //const int numSteps = 4;
         //const int stepsLookup[4] = { B1000, B0100, B0010, B0001 };
         
         //secuencia 2-fases
-        const int numSteps = 4;
+        
         const int stepsLookup[4] = { B1100, B0110, B0011, B1001 };
         
         //secuencia media fase

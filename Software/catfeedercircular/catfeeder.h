@@ -27,7 +27,7 @@
 #define CATFEEDER_SLOTS 8
 #define CATFEEDER_PROGRAMS CATFEEDER_SLOTS-1
 
-extern MotorStepperClass CATFEEDER_STEPPER_MOTOR;
+extern MotorStepperClass CATFEEDER_MOTOR;
 
 class CatFeederClass {
     public:
@@ -41,7 +41,7 @@ class CatFeederClass {
         String CATFEEDER_CONFIG_FILE =  "/catfeeder.json";
         String LOGGER_FILE = "/catfeeder.log";
         
-        MotorStepperClass *_motor = &CATFEEDER_STEPPER_MOTOR;
+        MotorStepperClass *_motor = &CATFEEDER_MOTOR;
         LoggerClass _logger;
         //BotClass _bot;
         String wifissid = "";

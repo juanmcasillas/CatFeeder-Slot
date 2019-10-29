@@ -4,7 +4,7 @@
 
 #include "catfeeder.h"
 
- MotorStepperClass CATFEEDER_STEPPER_MOTOR;
+ MotorStepperClass CATFEEDER_MOTOR;
 
 // arduino init
 String CatFeederClass::begin(FS *fs) {
@@ -229,7 +229,7 @@ String CatFeederClass::Scheduler_Config(AsyncWebServerRequest *request) {
                 this->scheduler[ptr] = p->value();
                 ptr++;
                 if (ptr > this->PROGRAMS) break;
-                DEBUGLOG("Arg %d: %s = %s\r\n", i, p->name().c_str(), p->value().c_str());
+                // DEBUGLOG("Arg %d: %s = %s\r\n", i, p->name().c_str(), p->value().c_str());
                 this->_logger.INFO("Program #%d: %s", i, p->value().c_str());
             }
 		}
@@ -497,7 +497,7 @@ String CatFeederClass::Bot_Config(AsyncWebServerRequest *request) {
     StaticJsonDocument<500> root;
     //JsonObject& root = jsonBuffer.createObject();
     //root["bottoken"] = this->_bot.token;
-    root["bottoken"] = "XXXX";
+    root["bottoken"] = "this->_bot.token";
 
     String ret;
     serializeJson(root,ret);
@@ -563,8 +563,12 @@ void CatFeederClass::_motor_moveto(int a, int b) {
 
     // calculate steps to do the required angle
     angle = this->ANGLE * distance;
-    steps = abs(_motor->stepsPerRev*angle/(360*2));
-
+    
+    //steps = abs(_motor->stepsPerRev*angle/(360*2));
+    steps = abs((this->ANGLE*distance)*_motor->stepsPerRev / (360.0*(_motor->numSteps/2)));
+    
+    
+    
     // move the motor n steps remember that we have configured the motor
     // by default as half step, so we have to command two moves.
 
